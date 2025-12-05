@@ -17,7 +17,5 @@ Backend: Python, Flask
 NLP Model: Hugging Face Transformers (google/flan-t5-base)
 Document Processing: python-docx, PyPDF
 Text Processing: Regex, Heuristic matching
-
 Logging: CSV-based interaction logging
-
 Testing: Pytest, Postman
