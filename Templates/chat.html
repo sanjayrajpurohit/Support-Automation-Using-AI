@@ -1,1 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Support Automation Assistant</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            position: relative;
+            padding-top: 40px;
+            padding-bottom: 120px;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: calc(100vh - 160px);
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            background: url('images/support.jpg') no-repeat center center fixed;
+            background-size: cover;
+            filter: blur(8px) brightness(0.8);
+        }
+
+        .main-content, .chatbot-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-content {
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+            background: rgba(208,208,208,0.85);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 6px 24px;
+            display: block;
+        }
+
+        .main-content h1 {
+            font-size: 32px;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .main-content p {
+            font-size: 18px;
+            color: #000;
+            margin-bottom: 20px;
+        }
+
+        .issue-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .issue-form textarea {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        .issue-form textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .issue-form button {
+            width: 100%;
+            padding: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .issue-form button:hover {
+            background-color: #2980b9;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border: 1px solid #f5c6cb;
+        }
+
+        .illustration {
+            max-width: 550px;
+            margin: 0 auto;
+        }
+
+        .illustration img {
+            width: 100%;
+        }
+
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            max-height: 60vh;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-hidden {
+            display: none !important;
+        }
+
+        .chat-header {
+            background-color: #3498db;
+            color: white;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header .title {
+            flex: 1;
+        }
+
+        .chat-header .controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-header .controls span {
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 0 6px;
+        }
+
+        .chat-body {
+            padding: 12px;
+            overflow-y: auto;
+            flex-grow: 1;
+            background-color: #f4f6f8;
+        }
+
+        .chat-message {
+            margin-bottom: 10px;
+        }
+
+        .chat-message.user p {
+            background-color: #d1ecf1;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 80%;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .chat-message.bot p {
+            background-color: #e2e3e5;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 80%;
+            margin-right: auto;
+            text-align: left;
+        }
+
+        .chat-footer {
+            display: flex;
+            border-top: 1px solid #ccc;
+        }
+
+        .chat-footer input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .chat-footer button {
+            padding: 12px 18px;
+            border: none;
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .chat-footer button:hover {
+            background-color: #2980b9;
+        }
+
+        .navigation-buttons {
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+            background: rgba(208,208,208,0.85);
+            border-radius: 18px;
+            padding: 14px 24px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 10;
+        }
+
+        .navigation-buttons .doc-info {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 900;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-button {
+            padding: 12px 20px;
+            background-color: #3498db;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+            min-width: 120px;
+        }
+
+        .nav-button:hover {
+            background-color: #2980b9;
+            text-decoration: none;
+            color: white;
+        }
+
+        .change-doc-link {
+            font-size: 12px;
+            text-align: center;
+            padding: 8px;
+            background-color: #f0f0f0;
+        }
+
+        .change-doc-link a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .change-doc-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding-top: 20px;
+                padding-bottom: 140px;
+            }
+
+            .content-wrapper {
+                padding: 10px;
+                gap: 15px;
+            }
+
+            .chatbot-container {
+                width: 90%;
+                right: 5%;
+                bottom: 10px;
+                max-height: 50vh;
+            }
+
+            .main-content h1 {
+                font-size: 24px;
+            }
+
+            .main-content p {
+                font-size: 16px;
+            }
+
+            .navigation-buttons {
+                padding: 15px;
+            }
+
+            .button-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .nav-button {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background-image"></div>
+    <div class="content-wrapper">
+        <div class="main-content">
+            <h1>Welcome to Support Automation Assistant</h1>
+            <p>Your intelligent assistant is ready to help you with your issue resolution. Describe your issue below and I'll find the most relevant documentation to help you.</p>
+            
+            {% if show_issue_form %}
+            <!-- Initial Issue Input Form -->
+            <div class="issue-form">
+                {% if error %}
+                    <div class="error-message">{{ error }}</div>
+                {% endif %}
+                <form method="POST" action="/">
+                    <textarea name="issue" placeholder="Please describe the issue you're experiencing..." required rows="4"></textarea>
+                    <button type="submit">Find Help</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Navigation Buttons (appears after welcome box when chat is active) -->
+        {% if not show_issue_form %}
+        <div class="navigation-buttons">
+            <div class="doc-info">📄 Current Document: {{ selected_document }}</div>
+            <div class="button-group">
+                <a href="{{ url_for('home') }}" class="nav-button">🆕 New Issue</a>
+                <a href="{{ url_for('select_document') }}" class="nav-button">📄 Change Document</a>
+                <a href="{{ url_for('download_report') }}" target="_blank" class="nav-button">📊 Download Report</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Chatbot Floating Container -->
+    {% if not show_issue_form %}
+    <div class="chatbot-container" id="chatbot">
+        <div class="chat-header">
+            <div class="title">🤖 Support Assistant</div>
+            <div class="controls">
+                <span id="minimize">—</span>
+                <span id="maximize" style="display:none;">🗖</span>
+                <span id="close">✕</span>
+            </div>
+        </div>
+        <div class="chat-body" id="chat-body">
+            {% for item in history %}
+                <div class="chat-message user">
+                    <p>{{ item.question }}</p>
+                </div>
+                <div class="chat-message bot">
+                    <p>{{ item.answer }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <form class="chat-footer" method="POST" action="/chat">
+            <input type="text" name="question" placeholder="Type your question..." autocomplete="off" required />
+            <button type="submit">Send</button>
+        </form>
+    </div>
+    {% endif %}
+
+   <script>
+    const chatbot = document.getElementById("chatbot");
+    const chatBody = document.getElementById("chat-body");
+    const minimizeBtn = document.getElementById("minimize");
+    const maximizeBtn = document.getElementById("maximize");
+    const closeBtn = document.getElementById("close");
+    const chatFooter = document.querySelector(".chat-footer");
+
+    // Minimize
+    minimizeBtn.addEventListener("click", () => {
+        chatBody.style.display = "none";
+        chatFooter.style.display = "none";
+        minimizeBtn.style.display = "none";
+        maximizeBtn.style.display = "inline-block";
+    });
+
+    // Maximize
+    maximizeBtn.addEventListener("click", () => {
+        chatBody.style.display = "block";
+        chatFooter.style.display = "flex";
+        minimizeBtn.style.display = "inline-block";
+        maximizeBtn.style.display = "none";
+    });
+
+    // Close → Clear session and redirect to new issue
+    closeBtn.addEventListener("click", () => {
+        // Create a form to submit the reset request
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/reset_chat';
+        document.body.appendChild(form);
+        form.submit();
+    });
+</script>
+
+
+</body>
+</html>
 
