@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Select Assistant</title>
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #f4f6f8;
+        margin: 0;
+        padding: 0;
+        color: #333;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 80px auto;
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 30px;
+    }
+
+    select {
+        width: 100%;
+        padding: 14px;
+        font-size: 16px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        margin-top: 10px;
+        transition: border-color 0.3s;
+    }
+
+    select:focus {
+        border-color: #3498db;
+        outline: none;
+    }
+
+    button {
+        width: 100%;
+        margin-top: 20px;
+        padding: 14px;
+        background-color: #3498db;
+        color: white;
+        font-size: 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #2980b9;
+    }
+
+    @media (max-width: 500px) {
+        .container {
+            margin: 40px 20px;
+            padding: 20px;
+        }
+    }
+</style>
+
+</head>
+<body>
+    <div class="container">
+        <h1>📄 Select a Document</h1>
+        <form method="POST">
+            <select name="document" required>
+                <option value="">-- Choose a Document --</option>
+                {% for doc in documents %}
+                    <option value="{{ doc }}" {% if selected == doc %}selected{% endif %}>{{ doc }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Load Document</button>
+        </form>
+    </div>
+</body>
+</html>
